@@ -1,102 +1,103 @@
-import Image from "next/image";
+import { TaskForm } from "@/components/TaskForm";
+import { TaskList } from "@/components/TaskList";
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col">
+      {/* Top Navbar */}
+      <header className="border-b border-neutral-800/80 bg-neutral-900/50 backdrop-blur-md sticky top-0 z-40">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-md shadow-blue-500/20">
+              TM
+            </div>
+            <div>
+              <h1 className="text-base font-bold text-white tracking-tight">
+                Task Management System
+              </h1>
+              <p className="text-[11px] text-neutral-400">
+                Backend em memória • Exposto via tRPC
+              </p>
+            </div>
+          </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              tRPC Ativo
+            </span>
+            <a
+              href="/api/trpc/task.getAll"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-neutral-400 hover:text-white px-3 py-1 rounded-lg border border-neutral-800 hover:bg-neutral-800 transition-colors"
+              title="Acessar endpoint tRPC diretamente"
+            >
+              /api/trpc ↗
+            </a>
+          </div>
         </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 space-y-8">
+        {/* Architecture Info Banner */}
+        <section className="bg-gradient-to-r from-blue-950/40 via-neutral-900 to-indigo-950/40 border border-blue-900/30 rounded-2xl p-5 shadow-lg">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="space-y-1">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-blue-400">
+                Armazenamento
+              </span>
+              <p className="text-sm font-semibold text-white">Memória (In-Memory)</p>
+              <p className="text-xs text-neutral-400">Sem banco de dados externo</p>
+            </div>
+            <div className="space-y-1">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-blue-400">
+                Protocolo
+              </span>
+              <p className="text-sm font-semibold text-white">tRPC v11 + Next.js App Router</p>
+              <p className="text-xs text-neutral-400">Tipagem ponta a ponta (E2E)</p>
+            </div>
+            <div className="space-y-1">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-blue-400">
+                Validação
+              </span>
+              <p className="text-sm font-semibold text-white">Zod Schemas</p>
+              <p className="text-xs text-neutral-400">Validação segura de inputs</p>
+            </div>
+            <div className="space-y-1">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-blue-400">
+                Modelagem
+              </span>
+              <p className="text-sm font-semibold text-white">Task Entity</p>
+              <p className="text-xs text-neutral-400 font-mono text-[11px]">
+                id, title, description, dateCreation
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Task Form Section */}
+        <section>
+          <TaskForm />
+        </section>
+
+        {/* Task List Section */}
+        <section>
+          <TaskList />
+        </section>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+      {/* Footer */}
+      <footer className="border-t border-neutral-800/60 py-6 mt-12 bg-neutral-900/30">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-neutral-500">
+          <p>
+            Task Management System • Simulação de backend em memória com tRPC
+          </p>
+          <p className="font-mono text-[11px]">
+            Model: Task &#123; id, title, description?, dateCreation &#125;
+          </p>
+        </div>
       </footer>
     </div>
   );
