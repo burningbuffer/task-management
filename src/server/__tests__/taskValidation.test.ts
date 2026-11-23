@@ -138,6 +138,19 @@ async function runTests() {
     );
   }
 
+  // 10. Teste: Carregamento incremental/paginado via getInfinite (5 tarefas por vez)
+  const page1 = await caller.task.getInfinite({ limit: 5 });
+  assert(
+    page1.items.length === 5 && page1.nextCursor === 5 && page1.totalCount > 5,
+    "Incremental: Primeira página retorna 5 tarefas com nextCursor correto"
+  );
+
+  const page2 = await caller.task.getInfinite({ limit: 5, cursor: page1.nextCursor });
+  assert(
+    page2.items.length === 5 && page2.nextCursor === 10,
+    "Incremental: Segunda página retorna mais 5 tarefas com continuidade"
+  );
+
   console.log("\n=======================================================");
   console.log(`TOTAL: ${passedTests}/${totalTests} testes passaram com sucesso!`);
   console.log("=======================================================");

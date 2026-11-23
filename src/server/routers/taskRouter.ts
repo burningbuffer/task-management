@@ -5,12 +5,35 @@ import { taskStore } from "../db/taskStore";
 import { createTaskSchema, updateTaskSchema } from "../types/task";
 
 export const taskRouter = router({
-  // Listar Tarefas: Endpoint para retornar a lista de tarefas. 
+  // Listar todas as tarefas em memória
   getAll: publicProcedure.query(() => {
     return taskStore.getAll();
   }),
 
-  // Obter uma tarefa por ID
+  // Paginação incremental com cursor para carregamento paginado/infinito
+  getInfinite: publicProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(50).default(5),
+        cursor: z.number().nullish(), // offset
+      })
+    )
+    .query(({ input }) => {
+      const limit = input.limit ?? 5;
+      const offset = input.cursor ?? 0;
+      const all = taskStore.getAll();
+      const items = all.slice(offset, offset + limit);
+      const nextCursor =
+        offset + limit < all.length ? offset + limit : undefined;
+
+      return {
+        items,
+        nextCursor,
+        totalCount: all.length,
+      };
+    }),
+
+  // Obter uma tarefa por ID com validação e erro significativo se não for encontrada
   getById: publicProcedure
     .input(
       z.object({
@@ -31,7 +54,7 @@ export const taskRouter = router({
       return task;
     }),
 
-  // Criar Tarefa: Endpoint para adicionar uma nova tarefa. 
+  // Criar uma nova tarefa (garante título obrigatório e não vazio)
   create: publicProcedure
     .input(createTaskSchema)
     .mutation(({ input }) => {
@@ -49,7 +72,7 @@ export const taskRouter = router({
       });
     }),
 
-  // Atualizar Tarefa: Endpoint para editar os dados de uma tarefa existente.
+  // Atualizar uma tarefa existente (retorna erro significativo se a tarefa não existir)
   update: publicProcedure
     .input(updateTaskSchema)
     .mutation(({ input }) => {
@@ -76,7 +99,7 @@ export const taskRouter = router({
       return updated;
     }),
 
-  // Deletar Tarefa: Endpoint para remover uma tarefa.
+  // Deletar uma tarefa (retorna erro significativo se a tarefa não existir)
   delete: publicProcedure
     .input(
       z.object({
