@@ -41,9 +41,6 @@ export function TaskForm() {
   return (
     <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 shadow-xl">
       <div className="flex items-center gap-3 mb-5">
-        <div className="w-9 h-9 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold text-lg border border-blue-500/30">
-          +
-        </div>
         <div>
           <h2 className="text-lg font-semibold text-white">Adicionar Nova Tarefa</h2>
           <p className="text-xs text-neutral-400">

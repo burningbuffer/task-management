@@ -53,43 +53,6 @@ export default async function Home() {
 
       {/* Main Content */}
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 space-y-8">
-        {/* Architecture Info Banner */}
-        <section className="bg-gradient-to-r from-blue-950/40 via-neutral-900 to-indigo-950/40 border border-blue-900/30 rounded-2xl p-5 shadow-lg">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="space-y-1">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-blue-400">
-                Renderização
-              </span>
-              <p className="text-sm font-semibold text-white">Server-Side (SSR)</p>
-              <p className="text-xs text-neutral-400">
-                Pré-carrega {initialTasks.length} tarefa(s) no servidor
-              </p>
-            </div>
-            <div className="space-y-1">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-blue-400">
-                Armazenamento
-              </span>
-              <p className="text-sm font-semibold text-white">Memória (In-Memory)</p>
-              <p className="text-xs text-neutral-400">Sem banco de dados externo</p>
-            </div>
-            <div className="space-y-1">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-blue-400">
-                Protocolo
-              </span>
-              <p className="text-sm font-semibold text-white">tRPC v11 + Next.js</p>
-              <p className="text-xs text-neutral-400">Tipagem ponta a ponta (E2E)</p>
-            </div>
-            <div className="space-y-1">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-blue-400">
-                Modelagem
-              </span>
-              <p className="text-sm font-semibold text-white">Task Entity</p>
-              <p className="text-xs text-neutral-400 font-mono text-[11px]">
-                id, title, description, dateCreation
-              </p>
-            </div>
-          </div>
-        </section>
 
         {/* Task Form Section */}
         <section>
@@ -107,9 +70,6 @@ export default async function Home() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-neutral-500">
           <p>
             Task Management System • Simulação de backend em memória com SSR e tRPC
-          </p>
-          <p className="font-mono text-[11px]">
-            Model: Task &#123; id, title, description?, dateCreation &#125;
           </p>
         </div>
       </footer>

@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import { Task } from "@/server/types/task";
-import { trpc } from "@/utils/trpc";
 import { TaskEditModal } from "./TaskEditModal";
+import { TaskDeleteModal } from "./TaskDeleteModal";
 
 interface TaskItemProps {
   task: Task;
@@ -11,22 +11,8 @@ interface TaskItemProps {
 
 export function TaskItem({ task }: TaskItemProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-
-  const utils = trpc.useUtils();
-
-  const deleteMutation = trpc.task.delete.useMutation({
-    onSuccess: () => {
-      setDeleteError(null);
-      utils.task.getAll.invalidate();
-    },
-    onError: (err) => {
-      setDeleteError(err.message || "Erro ao excluir tarefa.");
-      setTimeout(() => setDeleteError(null), 6000);
-    },
-  });
 
   const handleCopyId = () => {
     navigator.clipboard.writeText(task.id);
@@ -42,18 +28,6 @@ export function TaskItem({ task }: TaskItemProps) {
   return (
     <>
       <div className="bg-neutral-900 border border-neutral-800 hover:border-neutral-700/80 rounded-2xl p-5 transition-all shadow-sm group space-y-3">
-        {deleteError && (
-          <div className="p-3 bg-red-950/70 border border-red-800 rounded-xl text-red-300 text-xs flex items-center justify-between">
-            <span>{deleteError}</span>
-            <button
-              onClick={() => setDeleteError(null)}
-              className="text-red-400 hover:text-white font-bold ml-2"
-            >
-              ✕
-            </button>
-          </div>
-        )}
-
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-1.5">
@@ -127,6 +101,7 @@ export function TaskItem({ task }: TaskItemProps) {
 
           {/* Action buttons */}
           <div className="flex items-center gap-1.5 shrink-0">
+            {/* Botão de Editar */}
             <button
               onClick={() => setIsEditing(true)}
               className="p-2 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-xl transition-all cursor-pointer"
@@ -147,53 +122,42 @@ export function TaskItem({ task }: TaskItemProps) {
               </svg>
             </button>
 
-            {confirmDelete ? (
-              <div className="flex items-center gap-1 bg-red-950/80 border border-red-800 p-1 rounded-xl">
-                <button
-                  onClick={() => deleteMutation.mutate({ id: task.id })}
-                  disabled={deleteMutation.isPending}
-                  className="px-2 py-1 text-xs font-semibold text-red-200 hover:bg-red-900 rounded-lg transition-colors cursor-pointer"
-                  title="Confirmar exclusão"
-                >
-                  {deleteMutation.isPending ? "..." : "Excluir"}
-                </button>
-                <button
-                  onClick={() => setConfirmDelete(false)}
-                  className="px-1.5 py-1 text-xs text-neutral-400 hover:text-white rounded-lg transition-colors cursor-pointer"
-                  title="Cancelar"
-                >
-                  ✕
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => setConfirmDelete(true)}
-                className="p-2 text-neutral-400 hover:text-red-400 hover:bg-red-950/40 rounded-xl transition-all cursor-pointer"
-                title="Excluir tarefa"
+            {/* Botão de Excluir: Abre modal de confirmação com textbox */}
+            <button
+              onClick={() => setIsDeleting(true)}
+              className="p-2 text-neutral-400 hover:text-red-400 hover:bg-red-950/40 rounded-xl transition-all cursor-pointer"
+              title="Excluir tarefa"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                  />
-                </svg>
-              </button>
-            )}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
 
+      {/* Modal de Edição */}
       <TaskEditModal
         task={task}
         isOpen={isEditing}
         onClose={() => setIsEditing(false)}
+      />
+
+      {/* Modal com Textbox de Confirmação para Exclusão */}
+      <TaskDeleteModal
+        task={task}
+        isOpen={isDeleting}
+        onClose={() => setIsDeleting(false)}
       />
     </>
   );

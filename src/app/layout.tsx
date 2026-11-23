@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { TRPCProvider } from "@/components/providers/TRPCProvider";
+import { NotificationProvider } from "@/components/providers/NotificationProvider";
+import { TopNotificationBanner } from "@/components/TopNotificationBanner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +30,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-950 text-neutral-100 min-h-screen`}
       >
-        <TRPCProvider>{children}</TRPCProvider>
+        <TRPCProvider>
+          <NotificationProvider>
+            {/* Feedback visual de mensagens exibido no topo da página */}
+            <TopNotificationBanner />
+            {children}
+          </NotificationProvider>
+        </TRPCProvider>
       </body>
     </html>
   );
