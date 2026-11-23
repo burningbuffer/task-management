@@ -1,7 +1,15 @@
+import { getServerCaller } from "@/server/caller";
 import { TaskForm } from "@/components/TaskForm";
 import { TaskList } from "@/components/TaskList";
 
-export default function Home() {
+// Força a renderização do lado do servidor (SSR) em cada requisição
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  // Pré-carregamento Server-Side Rendering (SSR) via tRPC caller no servidor
+  const caller = await getServerCaller();
+  const initialTasks = await caller.task.getAll();
+
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col">
       {/* Top Navbar */}
@@ -16,14 +24,18 @@ export default function Home() {
                 Task Management System
               </h1>
               <p className="text-[11px] text-neutral-400">
-                Backend em memória • Exposto via tRPC
+                Backend em memória • Exposto via tRPC • SSR Habilitado
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-blue-950/80 text-blue-400 border border-blue-800/60">
+              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+              SSR Ativo
+            </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
               tRPC Ativo
             </span>
             <a
@@ -46,6 +58,15 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="space-y-1">
               <span className="text-[10px] uppercase font-bold tracking-wider text-blue-400">
+                Renderização
+              </span>
+              <p className="text-sm font-semibold text-white">Server-Side (SSR)</p>
+              <p className="text-xs text-neutral-400">
+                Pré-carrega {initialTasks.length} tarefa(s) no servidor
+              </p>
+            </div>
+            <div className="space-y-1">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-blue-400">
                 Armazenamento
               </span>
               <p className="text-sm font-semibold text-white">Memória (In-Memory)</p>
@@ -55,15 +76,8 @@ export default function Home() {
               <span className="text-[10px] uppercase font-bold tracking-wider text-blue-400">
                 Protocolo
               </span>
-              <p className="text-sm font-semibold text-white">tRPC v11 + Next.js App Router</p>
+              <p className="text-sm font-semibold text-white">tRPC v11 + Next.js</p>
               <p className="text-xs text-neutral-400">Tipagem ponta a ponta (E2E)</p>
-            </div>
-            <div className="space-y-1">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-blue-400">
-                Validação
-              </span>
-              <p className="text-sm font-semibold text-white">Zod Schemas</p>
-              <p className="text-xs text-neutral-400">Validação segura de inputs</p>
             </div>
             <div className="space-y-1">
               <span className="text-[10px] uppercase font-bold tracking-wider text-blue-400">
@@ -82,9 +96,9 @@ export default function Home() {
           <TaskForm />
         </section>
 
-        {/* Task List Section */}
+        {/* Task List Section com dados pré-carregados pelo SSR */}
         <section>
-          <TaskList />
+          <TaskList initialTasks={initialTasks} />
         </section>
       </main>
 
@@ -92,7 +106,7 @@ export default function Home() {
       <footer className="border-t border-neutral-800/60 py-6 mt-12 bg-neutral-900/30">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-neutral-500">
           <p>
-            Task Management System • Simulação de backend em memória com tRPC
+            Task Management System • Simulação de backend em memória com SSR e tRPC
           </p>
           <p className="font-mono text-[11px]">
             Model: Task &#123; id, title, description?, dateCreation &#125;

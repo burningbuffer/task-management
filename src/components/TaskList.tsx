@@ -2,14 +2,22 @@
 
 import React, { useState, useMemo } from "react";
 import { trpc } from "@/utils/trpc";
+import { Task } from "@/server/types/task";
 import { TaskItem } from "./TaskItem";
 
-export function TaskList() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "title">("newest");
+interface TaskListProps {
+  initialTasks?: Task[];
+}
 
+export function TaskList({ initialTasks = [] }: TaskListProps) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "title">("oldest");
+
+  // Utiliza os dados pré-carregados via SSR (Server-Side Rendering) como initialData
   const { data: tasks, isLoading, error, refetch, isRefetching } =
-    trpc.task.getAll.useQuery();
+    trpc.task.getAll.useQuery(undefined, {
+      initialData: initialTasks,
+    });
 
   const filteredTasks = useMemo(() => {
     if (!tasks) return [];
@@ -45,6 +53,14 @@ export function TaskList() {
           <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-neutral-800 text-neutral-300 border border-neutral-700">
             {tasks ? tasks.length : 0}
           </span>
+          {initialTasks.length > 0 && (
+            <span
+              className="text-[11px] text-blue-400 bg-blue-950/60 border border-blue-800/60 px-2 py-0.5 rounded-full"
+              title="Tarefas pré-carregadas pelo servidor no carregamento inicial da página"
+            >
+              SSR Pré-carregado
+            </span>
+          )}
           {isRefetching && (
             <span className="text-xs text-neutral-500 animate-pulse">
               Atualizando...
@@ -107,8 +123,8 @@ export function TaskList() {
         </div>
       </div>
 
-      {/* Loading state */}
-      {isLoading && (
+      {/* Loading state (apenas exibido se não houver dados pré-carregados) */}
+      {isLoading && !tasks && (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
             <div
@@ -165,7 +181,7 @@ export function TaskList() {
       )}
 
       {/* Tasks list */}
-      {!isLoading && !error && filteredTasks.length > 0 && (
+      {filteredTasks.length > 0 && (
         <div className="space-y-3">
           {filteredTasks.map((task) => (
             <TaskItem key={task.id} task={task} />
