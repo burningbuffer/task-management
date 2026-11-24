@@ -14,10 +14,15 @@ export function TaskItem({ task }: TaskItemProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const handleCopyId = () => {
-    navigator.clipboard.writeText(task.id);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopyId = async () => {
+    try {
+      await navigator.clipboard.writeText(task.id);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback gracioso caso clipboard não esteja disponível
+      setCopied(false);
+    }
   };
 
   const formattedDate = new Intl.DateTimeFormat("pt-BR", {
@@ -122,7 +127,7 @@ export function TaskItem({ task }: TaskItemProps) {
               </svg>
             </button>
 
-            {/* Botão de Excluir: Abre modal de confirmação com textbox */}
+            {/* Botão de Excluir */}
             <button
               onClick={() => setIsDeleting(true)}
               className="p-2 text-neutral-400 hover:text-red-400 hover:bg-red-950/40 rounded-xl transition-all cursor-pointer"
@@ -153,7 +158,7 @@ export function TaskItem({ task }: TaskItemProps) {
         onClose={() => setIsEditing(false)}
       />
 
-      {/* Modal com Textbox de Confirmação para Exclusão */}
+      {/* Caixa de Confirmação para Exclusão (Confirmar / Cancelar) */}
       <TaskDeleteModal
         task={task}
         isOpen={isDeleting}

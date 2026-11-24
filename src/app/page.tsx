@@ -29,25 +29,6 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-blue-950/80 text-blue-400 border border-blue-800/60">
-              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-              SSR Ativo
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">
-              <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-              tRPC Ativo
-            </span>
-            <a
-              href="/api/trpc/task.getAll"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-neutral-400 hover:text-white px-3 py-1 rounded-lg border border-neutral-800 hover:bg-neutral-800 transition-colors"
-              title="Acessar endpoint tRPC diretamente"
-            >
-              /api/trpc ↗
-            </a>
-          </div>
         </div>
       </header>
 

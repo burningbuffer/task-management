@@ -1,18 +1,18 @@
 
 ## Task Manager
 
-Simple Task Management System with Next.js and tRPC (Backend data persistence)     
+Simple Task Management System with Next.js and tRPC     
 
 ### Tech Stack
 
-- Next.js 16
+- Next.js 15
 - tRPC
 - TypeScript
 - Tailwind CSS
 
 ### Requirements
 
-- Next.js version 16
+- Next.js version 15
 - tRPC version 10
 - TypeScript version 5.x
 - Tailwind CSS version 4.x

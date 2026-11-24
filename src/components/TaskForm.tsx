@@ -2,20 +2,23 @@
 
 import React, { useState } from "react";
 import { trpc } from "@/utils/trpc";
+import { useNotification } from "@/components/providers/NotificationProvider";
 
 export function TaskForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const { notifySuccess } = useNotification();
   const utils = trpc.useUtils();
 
   const createMutation = trpc.task.create.useMutation({
-    onSuccess: () => {
+    onSuccess: (newTask) => {
       setTitle("");
       setDescription("");
       setErrorMessage(null);
       utils.task.getAll.invalidate();
+      notifySuccess(`Tarefa "${newTask.title}" criada com sucesso!`);
     },
     onError: (err) => {
       setErrorMessage(err.message || "Erro ao criar tarefa");
@@ -78,7 +81,6 @@ export function TaskForm() {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Ex.: Desenvolver endpoint de listagem"
             maxLength={200}
             disabled={createMutation.isPending}
             className="w-full px-4 py-2.5 bg-neutral-950 border border-neutral-700/80 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 text-sm transition-all"
@@ -96,7 +98,6 @@ export function TaskForm() {
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Detalhes ou critérios de aceitação da tarefa..."
             rows={3}
             maxLength={1000}
             disabled={createMutation.isPending}

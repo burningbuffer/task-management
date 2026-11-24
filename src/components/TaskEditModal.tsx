@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { trpc } from "@/utils/trpc";
 import { Task } from "@/server/types/task";
+import { useNotification } from "@/components/providers/NotificationProvider";
 
 interface TaskEditModalProps {
   task: Task;
@@ -15,11 +16,13 @@ export function TaskEditModal({ task, isOpen, onClose }: TaskEditModalProps) {
   const [description, setDescription] = useState(task.description || "");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const { notifySuccess } = useNotification();
   const utils = trpc.useUtils();
 
   const updateMutation = trpc.task.update.useMutation({
-    onSuccess: () => {
+    onSuccess: (updatedTask) => {
       utils.task.getAll.invalidate();
+      notifySuccess(`Tarefa "${updatedTask.title}" atualizada com sucesso!`);
       onClose();
     },
     onError: (err) => {
@@ -42,7 +45,8 @@ export function TaskEditModal({ task, isOpen, onClose }: TaskEditModalProps) {
     updateMutation.mutate({
       id: task.id,
       title: cleanTitle,
-      description: description.trim() || undefined,
+      // Permite limpar a descrição enviando string vazia que será tratada no backend
+      description: description.trim(),
     });
   };
 
@@ -56,7 +60,7 @@ export function TaskEditModal({ task, isOpen, onClose }: TaskEditModalProps) {
           </div>
           <button
             onClick={onClose}
-            className="text-neutral-400 hover:text-white p-1 rounded-lg hover:bg-neutral-800 transition-colors"
+            className="text-neutral-400 hover:text-white p-1 rounded-lg hover:bg-neutral-800 transition-colors cursor-pointer"
           >
             <svg
               className="w-5 h-5"
@@ -110,6 +114,7 @@ export function TaskEditModal({ task, isOpen, onClose }: TaskEditModalProps) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
+              placeholder="Deixe em branco para remover a descrição"
               className="w-full px-4 py-2.5 bg-neutral-950 border border-neutral-700/80 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm resize-y"
               disabled={updateMutation.isPending}
             />
@@ -120,14 +125,14 @@ export function TaskEditModal({ task, isOpen, onClose }: TaskEditModalProps) {
               type="button"
               onClick={onClose}
               disabled={updateMutation.isPending}
-              className="px-4 py-2 rounded-xl text-neutral-300 hover:bg-neutral-800 text-sm font-medium transition-colors"
+              className="px-4 py-2 rounded-xl text-neutral-300 hover:bg-neutral-800 text-sm font-medium transition-colors cursor-pointer"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={updateMutation.isPending || !title.trim()}
-              className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-neutral-800 disabled:text-neutral-500 text-white rounded-xl text-sm font-medium transition-all shadow-md"
+              className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-neutral-800 disabled:text-neutral-500 text-white rounded-xl text-sm font-medium transition-all shadow-md cursor-pointer"
             >
               {updateMutation.isPending ? "Salvando..." : "Salvar Alterações"}
             </button>

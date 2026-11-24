@@ -5,7 +5,7 @@ import { useNotification } from "@/components/providers/NotificationProvider";
 
 /**
  * Componente de feedback visual exibido no topo da página
- * para mensagens de sucesso e erro (ex.: após excluir uma tarefa)
+ * para mensagens de sucesso e erro (operações CRUD)
  */
 export function TopNotificationBanner() {
   const { notification, clearNotification } = useNotification();
@@ -18,6 +18,7 @@ export function TopNotificationBanner() {
   return (
     <aside
       aria-label="Notificações do sistema"
+      aria-live="assertive"
       className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-xl px-4 pointer-events-none transition-all duration-300 animate-in fade-in slide-in-from-top-4"
     >
       <div
